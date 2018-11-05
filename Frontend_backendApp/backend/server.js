@@ -7,23 +7,23 @@ import Issue from './model/Issue';
 const app = express();
 const router = express.Router();
 
-app.use(cors);
-app.use(bodyparser.json);
+app.use(cors());
+app.use(bodyparser.json());
 
-mongoose.connect('mongodb://localhost:27017/issues',{useNewUrlParser:true});
+mongoose.connect('mongodb://localhost:27017/issues');
 
 const connection = mongoose.connection;
 
-connection.once('open', () =>{
-    console.log('MongoDB data base connection established successfully.');
-});
+ connection.once('open', () =>{
+     console.log('MongoDB data base connection established successfully.');
+ });
 
 router.route('/issues').get((req,res) => {
      Issue.find((err,issues) =>{
          if(err)
              console.log(err);
          else {
-             console.log("Returning JSON")
+             //console.log("Returning JSON")
              res.json(issues);
          }
     });
@@ -34,7 +34,7 @@ router.route('issues/:id').get((req,res) =>{
        if(err)
            console.log(err);
        else {
-           console.log("Returnign JSONS")
+           //console.log("Returnign JSONS")
            res.json(issues);
        }
     });
