@@ -18,7 +18,7 @@ const connection = mongoose.connection;
      console.log('MongoDB data base connection established successfully.');
  });
 
-router.route('/issues').get((req,res) => {
+app.route('/issues').get((req,res) => {
      Issue.find((err,issues) =>{
          if(err)
              console.log(err);
@@ -29,32 +29,34 @@ router.route('/issues').get((req,res) => {
     });
 });
 
-router.route('issues/:id').get((req,res) =>{
-    Issue.findById(req.param.id,(req,issues) =>{
-       if(err)
-           console.log(err);
-       else {
-           //console.log("Returnign JSONS")
-           res.json(issues);
-       }
+// get request with parameter
+app.route('/issues/:id').get((req, res) => {
+    Issue.findById(req.params.id,(error, issues) => {
+        if(error)
+            console.log(error);
+        else {
+            res.json(issues);
+        }
     });
 });
 
-router.route('issues/add').post((req,res) =>{
+
+// create new issue
+app.route('/issues/add').post((req, res) => {
     let issue = new Issue(req.body);
-    issue.save()
-        .then( issue => {
-            res.status(200).json({'issue' : 'Added successfully'});
-        })
-        .catch(err =>{
-            res.status(400).send('Failed to create new Record');
-        });
+    issue.save().then(issue => {
+        res.status(200).json({'issue': 'Added Successfully : '+issue.title});
+    }).catch(err => {
+        res.status(400).send('failed to create new record');
+    });
 });
 
-router.route('issues/update/:id').post((req,res) =>{
-    Issue.findById(req.param.id,(err , issue) =>{
+
+app.route('/issues/update/:id').post((req,res) =>{
+    Issue.findById(req.params.id,(err , issue) =>{
         if(!issue)
-            return next(new Error('Could not load document'));
+            //return next(new Error('Could not load document'));
+            res.json('Document Not found');
         else{
             issue.title = req.body.title;
             issue.responsible = req.body.responsible;
@@ -71,12 +73,12 @@ router.route('issues/update/:id').post((req,res) =>{
     });
 });
 
-router.route('issues/delete/:id').get((req,res) => {
-    Issue.findByIdAndRemove({_id:req.param.id},(err,issue) =>{
+app.route('/issues/delete/:id').get((req,res) => {
+    Issue.findByIdAndRemove({_id:req.params.id},(err,issue) =>{
         if(err)
             res.json(err);
         else
-            res.json('Record removed SuccessFully : '+req.param.id);
+            res.json('Record removed SuccessFully : '+req.params.id);
     });
 });
 
